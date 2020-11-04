@@ -23,6 +23,6 @@ To work on this this repo:
    
    
 To set up Cloud9 for the graphing program:
-    1. Navigate to home directory using 'cd ..' in the terminal
-    2. Also in terminal install numpy with 'python3 -m install numpy'
-    3. Similar to numpy, install matplotlib with 'python3 -m install matplotlib'
+    1. Navigate to home directory in the terminal, use 'cd ..' to move back a single directory at a time.
+    2. Also in terminal install numpy with 'python3 -m pip install numpy'
+    3. Similar to numpy, install matplotlib with 'python3 -m pip install matplotlib'
