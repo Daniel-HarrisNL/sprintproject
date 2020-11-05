@@ -5,53 +5,64 @@ these in a formatted receipt. The receipt is then stored in a file and uploaded 
 
 Authors: Daniel Harris, Nicholas Hodder and Annette Clarke
 '''
+import os.path
+from os import path
 
+def user_file():
+    f=open("products.dat","w")
+    f.close()
 
-
-#open file and parse data using :
-'''
-
-just trying out ways to get the data 
-
-f=open("products.dat","r")
-content=f.readline()
-print(content)
-content_list=content.split(":")
-print(content_list)
-price = 0
-quantity = 0
-newvalue = 0
-
-products = {
-                'chicken' :  {'price':price,'quantity':quantity},
-                'pizza' :  {'price':price,'quantity':quantity}
+def sample_file():
+    f=open("products.dat","w")
+    
+    f.close()
+    
+def get_products():
+    f=open("products.dat")
+    products=dict()
+    for line in f:
+        items=line.strip("\n").split(':')
+        products.update({items[0]:dict()})
+        number_of_items=len(items)
+        for i in range(1,number_of_items-1,2):
+            if items[0] in products.keys():
+                products[items[0]].update({items[1]:items[i+1]})  
+            print(items)
+    f.close()
+    print(products)
     
     
+    #for k,v in products.items():
+     #   product_name = k
+     #   for key, value in v.items():
+      #      price = key
+        #    quantity = value
+      #      
     
-}
+if __name__ == "__main__":
+    
+    if not path.exists("products.dat"):
+        file_choice = input("No products file found.\nType 'create' to make your own, or any other input (including blank) to use a sample file:  ")
+        if file_choice.lower() == 'create':
+            user_file()
+        else:
+            sample_file()
+    
+    get_products()
 
-for key,value in products.items():
-    for k,v in value.items():
-        #do some code...
-        #to update the new values..
-        v = newvalue
- '''     
-''' The one below will bring back a nested dictionary or line items depending on how you print but don't know
-how to assign the values to the variables we'll need
-'''
-f=open('products.dat')
-products=dict()
-for line in f:
-    items=line.strip("\n").split(':')
-    products.update({items[0]:dict()})
-    number_of_items=len(items)
-    for i in range(1,number_of_items-1,2):
-        if items[0] in products.keys():
-            products[items[0]].update({items[1]:items[i+1]})      
-    
-    
-    
-product_name=input("What product would you like to purchase? ") #to distinquish from product in dictionary
+
+
+
+
+
+
+
+
+
+
+
+
+#product_name=input("What product would you like to purchase? ") #to distinquish from product in dictionary
 #which may need this variable name
 '''
 if item not in the list print("Sorry! Invalid item. Please try again!!") 
