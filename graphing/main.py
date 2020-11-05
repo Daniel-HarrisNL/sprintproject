@@ -7,12 +7,13 @@ It will compute the graph and ask the user if they wish to display the graph or 
 Authors: Annette Clarke, Nicholas Hodder, Daniel Harris
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 import graphing
-import matplotlib.pyplot as plt
-import matplotlib.image as mp
 import numpy
+from matplotlib import pyplot as plt
 
 
-# Create a list for all the different graph names (possibly use for if statement checks)
+
+
+#All available functions to choose from
 graph_list = {
             "linear"      : "f(x) = a*x + b", 
             "quadratic"   : "f(x) = a*x^2 + b*x + c", 
@@ -27,9 +28,12 @@ graph_list = {
 }
 
 
-'''Function Definitions'''
-#Prompts user for input of which equation to use
 def graph_type():
+    '''
+        Description: Receives user choice for which function to graph, validates 
+        Parameters: None
+        Returns: User selected function type
+    '''
     while True:
         
         function_type = input("Please select a graph type, or enter 'List' to view available choices: ")
@@ -72,26 +76,48 @@ def get_range():
     return range_start, range_end, range_spacing
 
 
-#Saves the graph to a filename defined by user
-def save_graph():
-    file_name = input ("Please name the file: ")
-    #validate(file_name) Finish file name validation to block empty names, beginning with special character or including unpermitted characters
-    f = open(file_name,"w")
-    f.close()
-    return 
+#Prompts user for their choice on graph features, validates the feature name within a loop until correct value entered.
+def feature_choices():
+    xlabel = None 
+    ylabel = None
+    title = None
+    features = [xlabel, ylabel, title]
+    fname = ["x-axis", "y-axis", "title"]
+    counter = 0
+    for feature in features:
+        while True:
+            feature = input("Enter a label for the " + fname[counter] + " or leave blank to skip: ")
+            counter = counter + 1
+            is_valid = validate(feature)
+            if is_valid == "skip":
+                feature = False
+                break
+            elif is_valid == True:
+                break
+            #If the entry is invalid the loop will restart, so decrement the counter to retry last value.
+            counter = counter - 1    
+    legend = input("Enter 'Y' to include a legend or submit any other input (including blank) to skip: ")
+    if legend.isspace() or legend.lower != 'y' or not legend:
+        legend = False
+    return xlabel, ylabel, title, legend
+ 
 
-#Validates the user input for naming standards
-def validate(name):
-    if name.isspace() or not name:
-        name = False
+#Validates the user input for naming standards  
+def validate(name, deny_special_chars = False):
+    if (name.isspace() or not name) and not deny_special_chars:
+        return "skip"
     elif not name[0].isalnum:
-        print("Error: Label must begin with an alphanumeric character.")
+        print("Error: Name must begin with an alphanumeric character.")
         return False
+    if deny_special_chars:
+        if not name.isalnum():
+            print("Error: Name must contain only alphanumeric characters.")
+            return False
     return True
 
-#Creates the graph,
+
+#Creates the graph
 def draw_graph(x,y,graph_type,xlabel,ylabel,legend, title):
-    
     # Set axis of the graph we will be using
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -114,11 +140,17 @@ def draw_graph(x,y,graph_type,xlabel,ylabel,legend, title):
         plt.legend()
     if title:
         plt.title(title)
+    plt.savefig("inside_function_test.png")
     
-    #img = mp.imread('graph.png') Trying to display the graph on Cloud9 ignore this if plt.show works - Daniel
-    #imgplot = plt.imshow(img)
-    plt.show()
-    
+ 
+ 
+#Saves the graph to a filename defined by user
+def save_graph():
+    file_name = input ("Please name the file (it will save as a .png): ")
+    while not validate(file_name, deny_special_chars = True):
+        file_name = input("Please try again, enter a valid file name: ")
+    plt.savefig(file_name + ".png")
+    return    
     
 
 
@@ -129,65 +161,39 @@ if __name__ == "__main__":
         #Prompt for graph type
         graph_type = graph_type()
         
-        
         #Assign the range using get_range() NOTE: Start value must be assigned before end value followed by spacing. 
         range_start, range_end, range_spacing = get_range()
         x = numpy.linspace(range_start, range_end, range_spacing)
-        
         
         #Determine graphing function from graphing.py, use get_function() to execute the retrieved function.
         get_function = getattr(graphing, graph_type)
         y = get_function(x)
         
+        #Input choices for graph features.
+        xlabel, ylabel, title, legend = feature_choices()
         
-        #Input choices for graph features, ensure the string begins with alphanumeric.
-        while True:
-            xlabel = input("Enter a label for the x-axis or leave blank to skip: ")
-            if xlabel.isspace() or not xlabel:
-                xlabel = False
-                break
-            else:
-                if validate(xlabel):
-                    break
-        while True:    
-            ylabel = input("Enter a label for the y-axis or leave blank to skip: ")
-            if ylabel.isspace() or not ylabel:
-                ylabel = False
-                break
-            else:
-                if validate(ylabel):
-                    break
-        while True:   
-            title = input("Enter a title for the graph or leave blank to skip: ")
-            if title.isspace() or not title:
-                title = False
-                break
-            else:
-                if validate(title):
-                    break
-            
-        legend = input("Enter 'Y' to include a legend or submit any other input (including blank) to skip: ")
-        if str(legend).isspace() or legend.lower != 'y' or not legend:
-            legend = False
-            
+        #Render the graph in memory
         draw_graph(x,y,graph_type,xlabel,ylabel,legend,title)
-        
         
         #Display or Save
         while True:
             output_type = input("Would you like to save or display the graph? Please enter 'S' or 'D': ")
+            
+            if not validate(output_type):
+                print("Please try again.")
+                continue
+            
             output_type = output_type.lower()
             
             if output_type == "d":
-                draw_graph(x,y,graph_type,xlabel,ylabel,legend,title)
+                plt.show()
                 break
                 
             elif output_type == "s":
                 save_graph()
                 break
             else:
-                print("Error: Must be a valid input ('S' or 'D')")
-
+                print("Error: Wrong character entered, please select one of the options.")
 
         #Continue or end
         cont = input("Would you like to make a new graph? Enter 'Y' to continue or any other input to exit.")

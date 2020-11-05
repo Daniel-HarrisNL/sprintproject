@@ -58,7 +58,7 @@ def logarithmic(x):
     # Function used to graph f(x) = a*log(b*x + c)
     
     #Check range bounds and return a default value of 1 if boundary is invalid.
-    if x <= 0:
+    if any(x <= 0):
         print("Error: Range out of bounds for log. Range must be greater than zero.")
         return 1
         
@@ -112,7 +112,7 @@ def squareroot(x):
             break
         except:
             print("Square root of negative number is not a real number")
-    y = a * sr
+    return a * sr
 
 
 def cuberoot(x):
@@ -121,5 +121,7 @@ def cuberoot(x):
     a = float(input("Input the 'a' variable: "))
     b = float(input("Input the 'b' variable: "))
     c = float(input("Input the 'c' variable: "))
-    y = a * (b*x + c)**(1/3)
+    cube = (b*x + c)
+    cbrt = numpy.cbrt(cube)
+    return a * cbrt
     
