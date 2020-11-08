@@ -51,17 +51,25 @@ def graph_type():
     return function_type.lower()
     
     
-
-#When called, shows a list of all available graph types to select
 def graph_type_list():
+    '''
+        Description: Shows a list of all available graph types which user can select from
+        Paramaters: None
+        Returns: Nothing
+    '''
     print("Here is a list of available graph types, displaying name and function:\n")
     for key,value in graph_list.items():
         print("{}: {}\n".format(key.upper(),value))
     return
 
 
-#Inputs the range with user prompt returns start and end as separate values.
 def get_range(graph_type_chosen):
+    '''
+        Description: Recieves user inputs for the range start, end and spacing.
+        Paramaters:
+            graph_type_chosen - A string containing the user selected graph type
+        Returns: Starting range, ending range, and range spacing.
+    '''
     while True:
         try:
             range_start = int(input("Input the start of the range: "))
@@ -82,8 +90,12 @@ def get_range(graph_type_chosen):
     return range_start, range_end, range_spacing
 
 
-#Prompts user for their choice on graph features, validates the feature name within a loop until correct value entered.
 def feature_choices():
+    '''
+        Description: Prompts user for their choice of graph features, validates the feature name within a loop until correct value entered.
+        Paramaters: None
+        Returns: A list of features configured with user input, with 'legend' on its own as True or False.
+    '''
     xlabel = None 
     ylabel = None
     title = None
@@ -109,8 +121,14 @@ def feature_choices():
     return features, legend
  
 
-#Validates the user input for naming standards  
 def validate(name, deny_special_chars = False):
+    '''
+        Description: Validates user inputs with naming conventions,
+        Paramaters:
+            name - String to be validated with the convention tests
+            deny_special_chars - Default false, true if no characters other than alphanumeric are permitted.
+        Returns: True if name string passes test, false if string fails.
+    '''
     if (name.isspace() or not name) and not deny_special_chars:
         return "skip"
     elif not name[0].isalnum():
@@ -123,9 +141,19 @@ def validate(name, deny_special_chars = False):
     return True
 
 
-#Creates the graph
 def draw_graph(x,y,graph_type_chosen,xlabel,ylabel,title,legend):
-    
+    '''
+        Description: Renders the graph using all data obtained throughout program
+        Paramaters:
+            x - List of all x coordinates
+            y - List of all y coordinates
+            graph_type_chosen - A string containing the user selected graph type
+            xlabel - User input string for x-axis name, default None if skipped.
+            ylabel - User input string for y-axis name, default None if skipped.
+            title - User input string for graph title, default None if skipped.
+            legend - Boolean determined by user selection
+        Returns: Nothing.
+    '''
     # Set axis of the graph including negative numbers
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -166,8 +194,12 @@ def draw_graph(x,y,graph_type_chosen,xlabel,ylabel,title,legend):
         plt.title(title)
     
  
-#Saves the graph to a filename defined by user
 def save_graph():
+    '''
+        Description: Saves the graph to a filename defined by user
+        Paramaters: None
+        Returns: Nothing.
+    '''
     file_name = input ("Please name the file (it will save as a .png): ")
     while not validate(file_name, deny_special_chars = True):
         file_name = input("Please try again, enter a valid file name: ")
