@@ -12,8 +12,7 @@ from matplotlib import pyplot as plt
 
 
 
-
-#All available functions to choose from
+#Available functions for user to choose from
 graph_list = {
             "linear"      : "f(x) = a*x + b", 
             "quadratic"   : "f(x) = a*x^2 + b*x + c", 
@@ -30,9 +29,9 @@ graph_list = {
 
 def graph_type():
     '''
-        Description: Receives user choice for which function to graph, validates 
+        Description: Receives user choice for which function to graph, confirms that the input is an available choice.
         Parameters: None
-        Returns: User selected function type
+        Returns: User selected function type.
     '''
     while True:
         
@@ -60,13 +59,20 @@ def graph_type_list():
         print("{}: {}\n".format(key.upper(),value))
     return
 
+
 #Inputs the range with user prompt returns start and end as separate values.
-def get_range():
+def get_range(graph_type_chosen):
     while True:
         try:
             range_start = int(input("Input the start of the range: "))
             range_end = int(input("Input the end of the range: "))
-            range_spacing = int(input("Input the range spacing (leave blank for default): "))
+            range_spacing = int(input("Input the number of points to generate: "))
+            if range_start > range_end:
+                print("Error: Starting range value must be less than ending range value.")
+                continue
+            if (graph_type_chosen == "logarithmic" or graph_type_chosen == "squareroot") and (range_start < 0 or range_end < 0):
+                print("Error: Logarithmic and Square root functions must have non-negative range.")
+                continue
             if (range_start < -2147483648) or (range_end > 2147483647):
                 print("Warning: Extremely large ranges may potentially not work as intended on certain hardware.")
             break
@@ -84,13 +90,13 @@ def feature_choices():
     features = [xlabel, ylabel, title]
     fname = ["x-axis", "y-axis", "title"]
     counter = 0
-    for feature in features:
+    while counter < len(features):
         while True:
-            feature = input("Enter a label for the " + fname[counter] + " or leave blank to skip: ")
+            features[counter] = input("Enter a label for the " + fname[counter] + " or leave blank to skip: ")
+            is_valid = validate(features[counter]) 
             counter = counter + 1
-            is_valid = validate(feature)
             if is_valid == "skip":
-                feature = False
+                features[counter-1] = False
                 break
             elif is_valid == True:
                 break
@@ -99,14 +105,15 @@ def feature_choices():
     legend = input("Enter 'Y' to include a legend or submit any other input (including blank) to skip: ")
     if legend.isspace() or legend.lower != 'y' or not legend:
         legend = False
-    return xlabel, ylabel, title, legend
+    
+    return features, legend
  
 
 #Validates the user input for naming standards  
 def validate(name, deny_special_chars = False):
     if (name.isspace() or not name) and not deny_special_chars:
         return "skip"
-    elif not name[0].isalnum:
+    elif not name[0].isalnum():
         print("Error: Name must begin with an alphanumeric character.")
         return False
     if deny_special_chars:
@@ -117,32 +124,47 @@ def validate(name, deny_special_chars = False):
 
 
 #Creates the graph
-def draw_graph(x,y,graph_type,xlabel,ylabel,legend, title):
-    # Set axis of the graph we will be using
+def draw_graph(x,y,graph_type_chosen,xlabel,ylabel,title,legend):
+    
+    # Set axis of the graph including negative numbers
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.spines['left'].set_position('center')
-    ax.spines['bottom'].set_position('center')
+   
+   #If the x-range is negative, shift the spines
+    if any(x < 0):
+        ax.spines['left'].set_position('center')
+    #else:
+     #   ax.spines['left'].set_position('zero')
+        
+    #If the y-range is negative, shift the spines    
+    if any(y < 0):
+        ax.spines['bottom'].set_position('center')
+    #else:
+     #   ax.spines['bottom'].set_position('zero')
+        
+    #Static settings
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
     
     #Plot the graph and assign it a legend label according to it's type
-    plt.plot(x,y, label=graph_type)
+    plt.plot(x,y, label=graph_type_chosen)
     
     #Draw the optional graph features if selected by the user
-    if xlabel:
+    if xlabel and any(y < 0):
+        plt.xlabel(xlabel, veticalalignment='bottom')
+    elif xlabel:
         plt.xlabel(xlabel)
-    if ylabel:
+    if ylabel and any(x < 0):
+        plt.ylabel(ylabel, horizontalalignment='left')
+    elif ylabel:
         plt.ylabel(ylabel)
     if legend:
         plt.legend()
-    if title:
+    if title:    
         plt.title(title)
-    plt.savefig("inside_function_test.png")
     
- 
  
 #Saves the graph to a filename defined by user
 def save_graph():
@@ -154,26 +176,36 @@ def save_graph():
     
 
 
+
+
 #Program Start
 if __name__ == "__main__":
     
     while True:
         #Prompt for graph type
-        graph_type = graph_type()
+        graph_type_chosen = graph_type()
+        
         
         #Assign the range using get_range() NOTE: Start value must be assigned before end value followed by spacing. 
-        range_start, range_end, range_spacing = get_range()
+        range_start, range_end, range_spacing = get_range(graph_type_chosen) 
         x = numpy.linspace(range_start, range_end, range_spacing)
         
-        #Determine graphing function from graphing.py, use get_function() to execute the retrieved function.
-        get_function = getattr(graphing, graph_type)
+        
+        #Determine graphing function from graphing.py using graph_type_chosen (function name as a string), use get_function() to execute the retrieved function.
+        get_function = getattr(graphing, graph_type_chosen)
         y = get_function(x)
+     
         
         #Input choices for graph features.
-        xlabel, ylabel, title, legend = feature_choices()
+        features, legend = feature_choices()
+        xlabel = features[0]
+        ylabel = features[1]
+        title = features[2]
+        
         
         #Render the graph in memory
-        draw_graph(x,y,graph_type,xlabel,ylabel,legend,title)
+        draw_graph(x,y,graph_type_chosen,xlabel,ylabel,title,legend)
+        
         
         #Display or Save
         while True:

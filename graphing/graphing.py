@@ -2,16 +2,15 @@ import numpy
 # Define all of our graphing functions each function asks for the variable inputs
 # and use them, along with the range of the graph to plot it
 
-def default(x):
-    return 0
+
 
 #This X is for testing purposes, remove in final product
 #x = 1
 
 def linear(x):
     # Function used to graph f(x) = a*x + b
-    a = int(input("Input the 'a' variable: "))
-    b = int(input("Input the 'b' variable: "))
+    a = float(input("Input the 'a' variable: "))
+    b = float(input("Input the 'b' variable: "))
     return (a * x) + b
 
 def quadratic(x):
@@ -84,7 +83,7 @@ def sine(x):
     c = float(input("Input the 'c' variable: "))
     num = b * x + c
     sine = numpy.sin(num)
-    y = a * sine
+    return a * sine
 
 
 def cos(x):
@@ -95,7 +94,7 @@ def cos(x):
     c = float(input("Input the 'c' variable: "))
     num = b * x + c
     cos = numpy.cos(num)
-    y = a * cos
+    return a * cos
 
 
 def squareroot(x):
