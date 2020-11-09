@@ -2,54 +2,70 @@ import numpy
 # Define all of our graphing functions each function asks for the variable inputs
 # and use them, along with the range of the graph to plot it
 
-
-
-#This X is for testing purposes, remove in final product
-#x = 1
-
 def linear(x):
     # Function used to graph f(x) = a*x + b
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return (a * x) + b
 
 def quadratic(x):
     # Function used to graph f(x) = a*x^2 + b*x + c
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return (a * x**2) + (b * x) + c
 
 
 def cubic(x):
     # Function used to graph f(x) = a*x^3 + b*x^2 + c*x + d
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    d = float(input("Input the 'd' variable: "))
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            d = float(input("Input the 'd' variable: "))
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return (a * x**3) + (b * x**2) + (c * x) + d
 
 
 def quartic(x):
     # Function used to graph f(x) = a*x^4 + b*x^3 + c*x^2 + d*x + e
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    d = float(input("Input the 'd' variable: "))
-    e = float(input("Input the 'e' variable: "))
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            d = float(input("Input the 'd' variable: "))
+            e = float(input("Input the 'e' variable: "))
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return (a * x**4) + (b * x**3) + (c * x**2) + (d * x) + e
 
 
 def exponential(x):
     # Function used to graph f(x) = a*b^(c*x + d)
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    d = float(input("Input the 'd' variable: "))
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            d = float(input("Input the 'd' variable: "))
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * (b**(c*x + d))
 
 
@@ -71,29 +87,37 @@ def logarithmic(x):
             log = numpy.log(num)
             break
         except:
-            print("Invalid input: Can't take logarithm of negative number or 0")
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * log
 
 
 def sine(x):
     # Function used to graph f(x) = a*sin(b*x + c)
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    num = b * x + c
-    sine = numpy.sin(num)
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            num = b * x + c
+            sine = numpy.sin(num)
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * sine
 
 
 def cos(x):
     # Function used to graph f(x) = a*cos(b*x + c)
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    num = b * x + c
-    cos = numpy.cos(num)
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            num = b * x + c
+            cos = numpy.cos(num)
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * cos
 
 
@@ -106,21 +130,28 @@ def squareroot(x):
             a = float(input("Input the 'a' variable: "))
             b = float(input("Input the 'b' variable: "))
             c = float(input("Input the 'c' variable: "))
+            if a < 0 or b < 0 or c < 0:
+                print("Error: Square root of negative number is not a real number, try again.")
+                continue
             num = b*x + c
             sr = numpy.sqrt(num)
             break
         except:
-            print("Square root of negative number is not a real number")
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * sr
 
 
 def cuberoot(x):
     # Function used to graph f(x) = a*(b*x + c)^(1/3)
-    
-    a = float(input("Input the 'a' variable: "))
-    b = float(input("Input the 'b' variable: "))
-    c = float(input("Input the 'c' variable: "))
-    cube = (b*x + c)
-    cbrt = numpy.cbrt(cube)
+    while True:
+        try:
+            a = float(input("Input the 'a' variable: "))
+            b = float(input("Input the 'b' variable: "))
+            c = float(input("Input the 'c' variable: "))
+            cube = (b*x + c)
+            cbrt = numpy.cbrt(cube)
+            break
+        except:
+            print("Error: Invalid input, coefficiencts must be a number.")
     return a * cbrt
     
