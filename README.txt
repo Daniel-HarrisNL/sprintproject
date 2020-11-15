@@ -26,3 +26,12 @@ To set up Cloud9 for the graphing program:
     1. Navigate to home directory in the terminal, use 'cd ..' to move back a single directory at a time.
     2. Also in terminal install numpy with 'python3 -m pip install numpy'
     3. Similar to numpy, install matplotlib with 'python3 -m pip install matplotlib'
+    
+    
+    -Ask what to buy
+    Ask quantity to buy
+    print total for item 
+    ask if they accept purchase
+    ask if they want to make another purchase
+    display all purchases as a receipt
+    save receipt as file and upload copy to S3

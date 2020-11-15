@@ -8,14 +8,110 @@ Authors: Daniel Harris, Nicholas Hodder and Annette Clarke
 import os.path
 from os import path
 
+def add_products():
+    f=open("products.dat","a")
+    more_products = True
+    while more_products == True:
+        new_product = input("Enter product name to add to the file: ")
+        new_product = new_product.strip()
+        if not new_product.isalnum():
+            print("Error: Product name must be alphanumeric.")
+            continue
+        while True:
+            try:
+                new_price = float(input("Enter the price of the product: $"))
+            except:
+                print("Error: Must only enter the price of the product, example: 9.99")
+                continue
+            break
+        while True:
+            try:
+                new_quantity = int(input("Enter the quantity of the product available: "))
+            except:
+                print("Error: Must only enter the quantity of the product, example: 15")
+                continue
+            break
+        
+        f.write("{}:{}:{}\n".format(new_product.lower(),new_price,new_quantity))
+        print("Product added!")
+        again = input("Are there more products to add? 'Y' for yes, or any other input (including blank) to finish: ")
+        if again.upper() == 'Y':
+            continue
+        else:
+            more_products = False
+            break
+    f.close()
+    return
+
+
 def user_file():
     f=open("products.dat","w")
     f.close()
+    add_products()
+    print("User file has been created.")
+    return
 
+
+def purchase_item(products,receipt):
+        while True:
+            product_name = input("What product would you like to buy? ")
+            product_name = product_name.strip()
+            if product_name.lower() not in products:
+                print("Error: Product entered is not available, please try again.")
+                continue
+            else:
+                break
+        price = [i for i in products[product_name].keys()][0]
+        quantity = [i for i in products[product_name].values()][0]
+        print("{} costs ${} per item. There are {} left in stock.".format(product_name, price,quantity))
+        while True:
+            try:
+                number_purchased=int(input("How many would you like to purchase? Enter 0 to cancel: "))
+            except:
+                print("Error: Please enter an integer quantity.")
+                continue
+            if number_purchased == 0:
+                print("Quantity 0 selected, cancelling product purchase.")
+                break
+            elif number_purchased < 0 or number_purchased > int(quantity):
+                print("Sorry, that quantity is invalid. Please try again")
+                continue
+            item_total=float(price)*(number_purchased)
+            confirm = input("Your total for this item is ${:.2f}. Enter any input (including blank) to confirm, or 'NO' to cancel this item.".format(item_total))
+            if confirm.upper() == "NO":
+                print("Please enter a new quantity. ")
+                continue
+            break
+         
+        #Iterate through products for the one being purchased
+        if not number_purchased == 0:
+            for k,v in products.items():
+                if k == product_name:                
+                    for key, value in v.items():
+                        if key == "quantity":
+                            #Update the quantity by subtracting the number purchased
+                            v[key] = quantity - number_purchased
+            if product_name in receipt:
+                print("Updated old product quantity purchased with the new quantity.")
+            receipt[product_name] = {'price':item_total,'quantity':number_purchased}
+        return products, receipt
+            
+    
+    
 def sample_file():
     f=open("products.dat","w")
-    
+    f.write("frozen pizza:9.99:15\n")
+    f.write("potatoes:6.97:20\n")
+    f.write("chicken:10.99:15\n")
+    f.write("orange juice:4.50:7\n")
+    f.write("cheesestrings:6.58:10\n")
+    f.write("lasagne:10.99:5\n")
+    f.write("steak:26.99:6\n")
+    f.write("beer:15.99:10\n")
+    print("Sample file generated.")
     f.close()
+    return
+   
     
 def get_products():
     f=open("products.dat")
@@ -27,88 +123,78 @@ def get_products():
         for i in range(1,number_of_items-1,2):
             if items[0] in products.keys():
                 products[items[0]].update({items[1]:items[i+1]})  
-            print(items)
     f.close()
-    print(products)
+    return products
     
     
-    #for k,v in products.items():
-     #   product_name = k
-     #   for key, value in v.items():
-      #      price = key
-        #    quantity = value
-      #      
+        
     
 if __name__ == "__main__":
-    
+    #Check for 'products.dat' prompt for user made file, or sample file to be used in the program.
     if not path.exists("products.dat"):
         file_choice = input("No products file found.\nType 'create' to make your own, or any other input (including blank) to use a sample file:  ")
         if file_choice.lower() == 'create':
             user_file()
         else:
             sample_file()
-    
-    get_products()
-
-
-
-
-
-
-
-
-
-
-
-
-
-#product_name=input("What product would you like to purchase? ") #to distinquish from product in dictionary
-#which may need this variable name
-'''
-if item not in the list print("Sorry! Invalid item. Please try again!!") 
-if item present quantity=int(input("How many would you like to purchase?"))
-He wants a line that says for ex. carrots cost$3.00. There are 20 left in stock. How many would you like to 
-purchase?
-    if quantity <0 or quantity >quantity in inventory:
-        print("Sorry, that quantity is invalid. Please try again")
-        continue
-    ***  or could set up the above as if >0 and <inventory quantity then else would be the above but thats 
-    not the way roy said.***
+    else:
+        print("Found 'products.dat'.")
         
-    (if valid quantity)
-    else: 
-        valid= input("Your total for this item was ${:.2f}. Is this ok? Y/N? ".format (item_total))
-            if valid.lower()=='n':
-                retry=input("Would you like to try again? Y/N)
-                    if retry.lower()=='y':
-                    continue
-                    
-                    elif retry.lower()=='n':
-                        print("Your total for today was {:.2f}" .format(total))
-                        break
-                    
-                    else:
-                        print("Invalid entry! Please try again.)
-                        continue
-                
-                
-            elif valid.lower()=='y':
-                cont=input("Would you like to continue? Y/N?)
-                    if cont.lower()=='y':
-                        continue
-                    
-                    elif cont.lower()=='n':
-                        print("Your total for today was {:.2f}" .format(total))
-                        break
-                    
-                    else:
-                        print("Invalid entry! Please try again.)
-                        continue
-                
-                
-       
+    
+    products = get_products()
+    
+    print ("Hello! Welcome to Billy Bob's Bargain Bonanza! The products we have for sale are as follows:  \n\n")
+    for product_name in products:
+        print(product_name.upper() + ':')
+
+        for price in products[product_name]:
+            print ("Price: ${}".format (price))
+        
+        for quantity in products[product_name].values():
+            print ("Quantity Remaining: {}\n".format(quantity))
+            
+    receipt = dict()
+        
+    while True:
+        products, receipt = purchase_item(products, receipt)
+        add_another = input("Enter 'MORE' to add purchase another product, or any other input (including blank) to stop: ")
+        if add_another.upper() == 'MORE':
+            continue
+        else:
+            break
+        
+    HST = 0.15
+    subtotal = 0
+    total = 0
+    
+    #Print the receipt
+    print("RECEIPT\n\n")
+    #Try to get this to print on one line
+    for product_name in receipt:
+        print(product_name.upper() + ':')
+
+        for price in receipt[product_name]:
+            print ("Price: ${}".format (price))
+        
+        for quantity in receipt[product_name].values():
+            print ("Quantity Remaining: {}\n".format(quantity))
     
     
- item_total=price*quantity  these are all coming from the dictionary. but how???
- total=total + item_total
-'''
+    
+   # for k,v in receipt.items():
+    #    for key,value in v.items():
+    #        if key == 'price':
+      #          item_price = value
+       #         subtotal = subtotal + item_price
+       #     elif key == 'quantity':
+      #          item_quantity = value
+      #  print("{} * {} {}\n".format(key.upper(), item_quantity, item_price))
+     #   
+  #  print("SUBTOTAL: ${}".format)
+            
+    
+        
+
+    
+    
+    
