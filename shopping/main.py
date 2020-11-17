@@ -7,6 +7,7 @@ Authors: Daniel Harris, Nicholas Hodder and Annette Clarke
 '''
 import os.path
 from os import path
+import boto3
 
 
 def add_products():
@@ -94,9 +95,9 @@ def make_receipt(receipt):
 
 def user_file():
     '''
-        Description:
-        Parameters:
-        Returns:
+        Description: Initializes a file for user to add products
+        Parameters: None
+        Returns: Nothing
     '''
     f=open("products.dat","w")
     f.close()
@@ -107,9 +108,13 @@ def user_file():
 
 def purchase_item(products,receipt):
     '''
-        Description:
-        Parameters:
+        Description: Allows user to purchase items from the product list, verifies input and then adds purchase to a receipt
+        Parameters: 
+            products - Dictionary containing all available product names and quantity/price attributes
+            receipt - Dictionary containing all purchased product names and quantity/price attributes
         Returns:
+            products - Updated with new quantity of purchased item
+            receipt - Updated with new product purchased, with quantity and total price attributes
     '''
     #Input and validate user entry for product to purchase
     while True:
@@ -147,7 +152,8 @@ def purchase_item(products,receipt):
      
     #Update product quantity
     if not number_purchased == 0:
-        products[product_name]['quantity'] = products[product_name]['quantity'] - number_purchased
+        #Failed to access key to update value, commented out temporarily
+        #products[product_name][1] = products[product_name][1] - number_purchased
         
         if product_name in receipt:
             print("Updated old product quantity purchased with the new quantity.")
@@ -237,6 +243,8 @@ if __name__ == "__main__":
     make_receipt(receipt)
     
     #Upload receipt to S3 bucket
+    s3 = boto3.client('s3')
+    s3.upload_file('receipt.txt', 'myreceiptbucket', 'receipt.txt')
     
     
         
