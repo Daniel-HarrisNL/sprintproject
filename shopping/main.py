@@ -8,7 +8,13 @@ Authors: Daniel Harris, Nicholas Hodder and Annette Clarke
 import os.path
 from os import path
 
+
 def add_products():
+    '''
+        Description: Loops to add products to the product.dat file until user exits, verifies each entry.
+        Parameters: None
+        Returns: Nothing
+    '''
     f=open("products.dat","a")
     more_products = True
     while more_products == True:
@@ -42,7 +48,15 @@ def add_products():
             break
     f.close()
     return
-def make_receipt():
+
+
+def make_receipt(receipt):
+    '''
+        Description: Generates a formatted receipt of all purchased items, displays receipt to the user and saves it as a text file
+        Parameters: 
+            receipt - Dictionary containing all purchased product names and quantity,price attributes
+        Returns: Nothing
+    '''
     HST = 0.15
     subtotal = 0
     total = 0
@@ -50,7 +64,8 @@ def make_receipt():
     #Print the receipt
     print("\n\nRECEIPT\n\n")
     f.write("RECEIPT\n\n")
-    #Try to get this to print on one line
+    
+    #Format the receipt output for each item being purchased
     for product_name in receipt:
         quantity = receipt[product_name]['quantity']
         price = receipt[product_name]['price']
@@ -65,16 +80,24 @@ def make_receipt():
     hst_str = "${:.2f}".format(subtotal*HST)
     total_str = "${:.2f}".format(subtotal + (subtotal*HST))
     
+    #Display the receipt totals
     print("\n\n{:<20}{:>10}".format("SUBTOTAL:", sub_str))
     print("{:<20}{:>10}".format("HST:", hst_str))
     print("{:<20}{:>10}".format("TOTAL:", total_str))
-    
+    #Save the receipt totals to text file
     f.write("\n{:<20}{:>10}\n".format("SUBTOTAL:", sub_str))
     f.write("{:<20}{:>10}\n".format("HST:", hst_str))
     f.write("{:<20}{:>10}".format("TOTAL:", total_str))
     f.close()
+    return
+
 
 def user_file():
+    '''
+        Description:
+        Parameters:
+        Returns:
+    '''
     f=open("products.dat","w")
     f.close()
     add_products()
@@ -83,52 +106,62 @@ def user_file():
 
 
 def purchase_item(products,receipt):
-        while True:
-            product_name = input("What product would you like to buy? ")
-            product_name = product_name.strip()
-            if product_name.lower() not in products:
-                print("Error: Product entered is not available, please try again.")
-                continue
-            else:
-                break
-        price = [i for i in products[product_name].keys()][0]
-        quantity = [i for i in products[product_name].values()][0]
-        print("{} costs ${} per item. There are {} left in stock.".format(product_name, price,quantity))
-        while True:
-            try:
-                number_purchased=int(input("How many would you like to purchase? Enter 0 to cancel: "))
-            except:
-                print("Error: Please enter an integer quantity.")
-                continue
-            if number_purchased == 0:
-                print("Quantity 0 selected, cancelling product purchase.")
-                break
-            elif number_purchased < 0 or number_purchased > int(quantity):
-                print("Sorry, that quantity is invalid. Please try again")
-                continue
-            item_total=float(price)*(number_purchased)
-            confirm = input("Your total for this item is ${:.2f}. Enter any input (including blank) to confirm, or 'NO' to cancel this item.".format(item_total))
-            if confirm.upper() == "NO":
-                print("Please enter a new quantity. ")
-                continue
+    '''
+        Description:
+        Parameters:
+        Returns:
+    '''
+    #Input and validate user entry for product to purchase
+    while True:
+        product_name = input("What product would you like to buy? ")
+        product_name = product_name.strip()
+        if product_name.lower() not in products:
+            print("Error: Product entered is not available, please try again.")
+            continue
+        else:
             break
-         
-        #Iterate through products for the one being purchased
-        if not number_purchased == 0:
-            for k,v in products.items():
-                if k == product_name:                
-                    for key, value in v.items():
-                        if key == "quantity":
-                            #Update the quantity by subtracting the number purchased
-                            v[key] = quantity - number_purchased
-            if product_name in receipt:
-                print("Updated old product quantity purchased with the new quantity.")
-            receipt[product_name] = {'price':item_total,'quantity':number_purchased}
-        return products, receipt
+    price = [i for i in products[product_name].keys()][0]
+    quantity = [i for i in products[product_name].values()][0]
+    print("{} costs ${} per item. There are {} left in stock.".format(product_name, price,quantity))
+    
+    #Input and validate user entry for quantity to purchase
+    while True:
+        try:
+            number_purchased=int(input("How many would you like to purchase? Enter 0 to cancel: "))
+        except:
+            print("Error: Please enter an integer quantity.")
+            continue
+        if number_purchased == 0:
+            print("Quantity 0 selected, cancelling product purchase.")
+            break
+        elif number_purchased < 0 or number_purchased > int(quantity):
+            print("Sorry, that quantity is invalid. Please try again")
+            continue
+        #Calculate total price for this item, then ask to confirm
+        item_total=float(price)*(number_purchased)
+        confirm = input("Your total for this item is ${:.2f}. Enter any input (including blank) to confirm, or 'NO' to cancel this item.".format(item_total))
+        if confirm.upper() == "NO":
+            print("Please enter a new quantity. ")
+            continue
+        break
+     
+    #Update product quantity
+    if not number_purchased == 0:
+        products[product_name]['quantity'] = products[product_name]['quantity'] - number_purchased
+        
+        if product_name in receipt:
+            print("Updated old product quantity purchased with the new quantity.")
+        receipt[product_name] = {'price':item_total,'quantity':number_purchased}
+    return products, receipt
             
     
     
 def sample_file():
+    '''
+        Description: Creates a products.dat file containing static elements
+        Parameters: None
+        Returns: Nothing
+    '''
     f=open("products.dat","w")
     f.write("frozen pizza:9.99:15\n")
     f.write("potatoes:6.97:20\n")
@@ -144,6 +177,11 @@ def sample_file():
    
     
 def get_products():
+    '''
+        Description: Opens the file containing product info, imports all products with attributes from within
+        Parameters: None
+        Returns: A dictionary, 'products' containing the imported product info
+    '''
     f=open("products.dat")
     products=dict()
     for line in f:
@@ -196,7 +234,9 @@ if __name__ == "__main__":
             break
         
     #Display the formatted receipt, and save it as receipt.txt    
-    make_receipt()
+    make_receipt(receipt)
+    
+    #Upload receipt to S3 bucket
     
     
         
