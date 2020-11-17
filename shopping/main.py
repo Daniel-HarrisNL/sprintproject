@@ -42,7 +42,37 @@ def add_products():
             break
     f.close()
     return
-
+def make_receipt():
+    HST = 0.15
+    subtotal = 0
+    total = 0
+    f=open("receipt.txt","w")
+    #Print the receipt
+    print("\n\nRECEIPT\n\n")
+    f.write("RECEIPT\n\n")
+    #Try to get this to print on one line
+    for product_name in receipt:
+        quantity = receipt[product_name]['quantity']
+        price = receipt[product_name]['price']
+        formatted_product = "{} * {}".format(product_name.upper(), quantity)
+        formatted_price = "${:.2f}".format(price)
+        final = "{:<20}{:>10}\n".format(formatted_product, formatted_price)
+        print(final)
+        f.write(final)
+        subtotal = subtotal + float(receipt[product_name]['price'])
+        
+    sub_str = "${:.2f}".format(subtotal)    
+    hst_str = "${:.2f}".format(subtotal*HST)
+    total_str = "${:.2f}".format(subtotal + (subtotal*HST))
+    
+    print("\n\n{:<20}{:>10}".format("SUBTOTAL:", sub_str))
+    print("{:<20}{:>10}".format("HST:", hst_str))
+    print("{:<20}{:>10}".format("TOTAL:", total_str))
+    
+    f.write("\n{:<20}{:>10}\n".format("SUBTOTAL:", sub_str))
+    f.write("{:<20}{:>10}\n".format("HST:", hst_str))
+    f.write("{:<20}{:>10}".format("TOTAL:", total_str))
+    f.close()
 
 def user_file():
     f=open("products.dat","w")
@@ -140,9 +170,10 @@ if __name__ == "__main__":
     else:
         print("Found 'products.dat'.")
         
-    
+    #Retrieve list of products
     products = get_products()
     
+    #Display greeting and list all available products from products.dat
     print ("Hello! Welcome to Billy Bob's Bargain Bonanza! The products we have for sale are as follows:  \n\n")
     for product_name in products:
         print(product_name.upper() + ':')
@@ -154,7 +185,8 @@ if __name__ == "__main__":
             print ("Quantity Remaining: {}\n".format(quantity))
             
     receipt = dict()
-        
+     
+    #Prompt users to add more products until they break    
     while True:
         products, receipt = purchase_item(products, receipt)
         add_another = input("Enter 'MORE' to add purchase another product, or any other input (including blank) to stop: ")
@@ -163,38 +195,11 @@ if __name__ == "__main__":
         else:
             break
         
-    HST = 0.15
-    subtotal = 0
-    total = 0
+    #Display the formatted receipt, and save it as receipt.txt    
+    make_receipt()
     
-    #Print the receipt
-    print("RECEIPT\n\n")
-    #Try to get this to print on one line
-    for product_name in receipt:
-        print(product_name.upper() + ':')
-
-        for price in receipt[product_name]:
-            print ("Price: ${}".format (price))
-        
-        for quantity in receipt[product_name].values():
-            print ("Quantity Remaining: {}\n".format(quantity))
-    
-    
-    
-   # for k,v in receipt.items():
-    #    for key,value in v.items():
-    #        if key == 'price':
-      #          item_price = value
-       #         subtotal = subtotal + item_price
-       #     elif key == 'quantity':
-      #          item_quantity = value
-      #  print("{} * {} {}\n".format(key.upper(), item_quantity, item_price))
-     #   
-  #  print("SUBTOTAL: ${}".format)
-            
     
         
 
-    
-    
+
     
